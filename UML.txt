@@ -3,10 +3,6 @@ skinparam packageStyle rectangle
 
 package "Framework" {
 
-    interface State {
-        +handle(char: String, context: DetectorContext)
-    }
-
     class DetectorContext {
         -currentState: State
         +setState(state: State)
@@ -20,6 +16,19 @@ package "Framework" {
     }
 
     Detector --> DetectorContext
+}
+
+package "SharedStates"{
+    abstract class State {
+        #detector : Detector
+        +consume(character : String)
+    }
+
+    class InvalidState {
+        +consume(character : String)
+    }
+
+    State <|-- InvalidState
     DetectorContext *--> State : currentState
 }
 
@@ -125,79 +134,133 @@ title Integer Detector State Machine
 [*] --> Start
 
 Start --> Digits : 1-9
-Start --> Dead : other
+Start --> Invalid : other
 
 Digits --> Digits : 0-9
-Digits --> Dead : other
+Digits --> Invalid : other
 
 Digits --> [*]
 
-Dead --> Dead : any
+Invalid --> Invalid : any
 
 @enduml
 
 @startuml
+title Floating Point Detector State Machine
 
 [*] --> Start
+
+state Invalid
 
 Start --> Whole : 1-9
 Start --> Zero : 0
 Start --> Dot : .
+Start --> Invalid : other
 
 Whole --> Whole : digit
 Whole --> Dot : .
+Whole --> Invalid : other
 
 Zero --> Dot : .
+Zero --> Invalid : other
 
 Dot --> Fraction : digit
+Dot --> Invalid : other
 
 Fraction --> Fraction : digit
+Fraction --> Invalid : other
 
 Fraction --> [*]
 
+Invalid --> Invalid : any
+
 @enduml
 
 @startuml
+title Binary Detector State Machine
 
 [*] --> Start
 
+state Invalid
+
 Start --> LastWas1 : 1
-Start --> Dead : other
+Start --> Invalid : other
 
 LastWas1 --> LastWas1 : 1
 LastWas1 --> LastWas0 : 0
+LastWas1 --> Invalid : other
 
 LastWas0 --> LastWas1 : 1
 LastWas0 --> LastWas0 : 0
+LastWas0 --> Invalid : other
 
 LastWas1 --> [*]
 
+Invalid --> Invalid : any
+
 @enduml
 
 @startuml
+title Email Address Detector State Machine
 
 [*] --> Part1
 
+state Invalid
+
 Part1 --> Part1 : valid char
 Part1 --> Part2 : @
+Part1 --> Invalid : space
 
 Part2 --> Part2 : valid char
 Part2 --> Part3 : .
+Part2 --> Invalid : space/@
 
 Part3 --> Part3 : valid char
+Part3 --> Invalid : space/@/.
 
 Part3 --> [*]
+
+Invalid --> Invalid : any
 
 @enduml
 
 @startuml
+title Password Detector State Machine
 
-[*] --> Normal
+[*] --> Invalid
 
-Normal --> Special : special
-Normal --> Normal : other
+state Invalid
+state Valid
+state EndsWithSpecial
 
-Special --> Special : special
-Special --> Normal : non-special
+Invalid --> Invalid : requirements missing
+
+Invalid --> Valid : uppercase + special + length >= 8
+
+Valid --> Valid : valid character
+
+Valid --> EndsWithSpecial : special character
+
+EndsWithSpecial --> Invalid : ends with special
+
+EndsWithSpecial --> Valid : non-special character
+
+Valid --> [*]
+
+note right of Invalid
+Tracks:
+- length >= 8
+- has uppercase
+- has special
+
+Not accepted until
+all conditions are met.
+end note
+
+note right of EndsWithSpecial
+Not accepted because
+password cannot end
+with special character.
+end note
 
 @enduml
