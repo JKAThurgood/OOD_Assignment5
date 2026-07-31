@@ -37,7 +37,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "regexes.AppKt"
+    mainClass = "AppKt"
 }
 
 tasks.named<Test>("test") {

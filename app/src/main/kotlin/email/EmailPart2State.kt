@@ -12,7 +12,7 @@ class EmailPart2State(
 
         when {
             character == "." ->
-                context.changeState(EmailPart3State(context))
+                context.changeState(EmailPart3StartState(context))
 
             character == "@" ->
                 context.changeState(Invalid(context))

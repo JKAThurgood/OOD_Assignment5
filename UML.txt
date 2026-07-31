@@ -207,31 +207,33 @@ Invalid --> Invalid : any
 @startuml
 title Email Address Detector State Machine
 
-[*] --> EmailStart
+[*] --> EmailPart1StartState
 
 state Invalid
 
-EmailStart --> Part1 : valid char
-EmailStart --> Invalid : space/@
+EmailPart1StartState --> EmailPart1State : valid char
+EmailPart1StartState --> Invalid : space/@
 
-Part1 --> Part1 : valid char
-Part1 --> Part2Start : @
-Part1 --> Invalid : space
+EmailPart1State --> EmailPart1State : valid char
+EmailPart1State --> EmailPart2StartState : @
+EmailPart1State --> Invalid : space
 
-Part2Start --> Part2 : valid char
-Part2Start --> Invalid : space/@/.
 
-Part2 --> Part2 : valid char
-Part2 --> Part3Start : .
-Part2 --> Invalid : space/@
+EmailPart2StartState --> EmailPart2State : valid char
+EmailPart2StartState --> Invalid : space/@/.
 
-Part3Start --> Part3 : valid char
-Part3Start --> Invalid : space/@/.
+EmailPart2State --> EmailPart2State : valid char
+EmailPart2State --> EmailPart3StartState : .
+EmailPart2State --> Invalid : space/@
 
-Part3 --> Part3 : valid char
-Part3 --> Invalid : space/@/.
 
-Part3 --> [*]
+EmailPart3StartState --> EmailPart3State : valid char
+EmailPart3StartState --> Invalid : space/@/.
+
+EmailPart3State --> EmailPart3State : valid char
+EmailPart3State --> Invalid : space/@/.
+
+EmailPart3State --> [*]
 
 Invalid --> Invalid : any
 
@@ -244,19 +246,16 @@ title Password Detector State Machine
 
 state Invalid
 state Valid
-state EndsWithSpecial
+state EndingSpecial
 
 Invalid --> Invalid : requirements missing
+Invalid --> Valid : length >= 8\nuppercase + special
 
-Invalid --> Valid : uppercase + special + length >= 8
+Valid --> Valid : non-special
+Valid --> EndingSpecial : special
 
-Valid --> Valid : valid character
-
-Valid --> EndsWithSpecial : special character
-
-EndsWithSpecial --> Invalid : ends with special
-
-EndsWithSpecial --> Valid : non-special character
+EndingSpecial --> Valid : non-special
+EndingSpecial --> EndingSpecial : special
 
 Valid --> [*]
 
@@ -265,15 +264,12 @@ Tracks:
 - length >= 8
 - has uppercase
 - has special
-
-Not accepted until
-all conditions are met.
 end note
 
-note right of EndsWithSpecial
-Not accepted because
-password cannot end
-with special character.
+note right of EndingSpecial
+Not accepting:
+password ends
+with special char
 end note
 
 @enduml

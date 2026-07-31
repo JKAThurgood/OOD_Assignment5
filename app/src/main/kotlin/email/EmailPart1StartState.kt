@@ -4,17 +4,17 @@ import detectors.StateContext
 import sharedStates.Invalid
 import sharedStates.State
 
-class EmailPart1State(
+class EmailPart1StartState(
     context: StateContext
 ) : State(context) {
 
     override fun consume(character: String) {
 
         when {
-            character == "@" ->
-                context.changeState(EmailPart2StartState(context))
-
             character == " " ->
+                context.changeState(Invalid(context))
+
+            character == "@" ->
                 context.changeState(Invalid(context))
 
             else ->
