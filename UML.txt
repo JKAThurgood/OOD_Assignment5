@@ -99,16 +99,19 @@ package "Binary States" {
 
 package "Email States" {
 
+    class EmailPart0State
     class EmailPart1State
     class EmailPart2State
     class EmailPart3State
 
+    State <|.. EmailPart0State
     State <|.. EmailPart1State
     State <|.. EmailPart2State
     State <|.. EmailPart3State
 
-    EmailDetector ..> EmailPart1State : initial
+    EmailDetector ..> EmailPart0State : initial
 
+    EmailPart0State --> EmailPart1State
     EmailPart1State --> EmailPart2State
     EmailPart2State --> EmailPart3State
 }
@@ -180,12 +183,12 @@ Invalid --> Invalid : any
 @startuml
 title Binary Detector State Machine
 
-[*] --> Start
+[*] --> BinaryStart
 
 state Invalid
 
-Start --> LastWas1 : 1
-Start --> Invalid : other
+BinaryStart --> LastWas1 : 1
+BinaryStart --> Invalid : other
 
 LastWas1 --> LastWas1 : 1
 LastWas1 --> LastWas0 : 0
@@ -204,17 +207,26 @@ Invalid --> Invalid : any
 @startuml
 title Email Address Detector State Machine
 
-[*] --> Part1
+[*] --> EmailStart
 
 state Invalid
 
+EmailStart --> Part1 : valid char
+EmailStart --> Invalid : space/@
+
 Part1 --> Part1 : valid char
-Part1 --> Part2 : @
+Part1 --> Part2Start : @
 Part1 --> Invalid : space
 
+Part2Start --> Part2 : valid char
+Part2Start --> Invalid : space/@/.
+
 Part2 --> Part2 : valid char
-Part2 --> Part3 : .
+Part2 --> Part3Start : .
 Part2 --> Invalid : space/@
+
+Part3Start --> Part3 : valid char
+Part3Start --> Invalid : space/@/.
 
 Part3 --> Part3 : valid char
 Part3 --> Invalid : space/@/.
