@@ -1,8 +1,12 @@
 package sharedStates
 
-class Invalid(detector: Detector) : State(detector) {
+import detectors.StateContext
+
+class Invalid(
+    context: StateContext
+) : State(context) {
 
     override fun consume(character: String) {
-        // Dead state
+        // stay invalid
     }
 }

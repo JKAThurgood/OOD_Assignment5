@@ -1,17 +1,19 @@
 package integer
 
-import sharedStates.Detector
+import detectors.StateContext
 import sharedStates.Invalid
 import sharedStates.State
 
-class IntegerStartState(detector: Detector) : State(detector) {
+class IntegerStartState(
+    context: StateContext
+) : State(context) {
 
     override fun consume(character: String) {
 
         if (character in "123456789") {
-            detector.changeState(IntegerDigitState(detector))
+            context.changeState(IntegerDigitState(context))
         } else {
-            detector.changeState(Invalid(detector))
+            context.changeState(Invalid(context))
         }
     }
 }

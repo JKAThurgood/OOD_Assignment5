@@ -1,26 +1,10 @@
 @startuml
 skinparam packageStyle rectangle
 
-package "Framework" {
+package "SharedStates" {
 
-    class DetectorContext {
-        -currentState: State
-        +setState(state: State)
-        +process(char: String)
-        +isAccepted(): Boolean
-    }
-
-    abstract class Detector {
-        +detect(input: String): Boolean
-        +createInitialState(): State
-    }
-
-    Detector --> DetectorContext
-}
-
-package "SharedStates"{
     abstract class State {
-        #detector : Detector
+        #context : StateContext
         +consume(character : String)
     }
 
@@ -29,10 +13,24 @@ package "SharedStates"{
     }
 
     State <|-- InvalidState
-    DetectorContext *--> State : currentState
+
+    
 }
 
 package "Detectors" {
+
+    interface StateContext {
+        +changeState(state : State)
+    }
+
+    abstract class Detector {
+        #currentState : State
+        +test(input : String) : Boolean
+        +createInitialState() : State
+        +changeState(state : State)
+    }
+
+    Detector ..|> StateContext
 
     class IntegerDetector
     class FloatDetector
@@ -45,6 +43,9 @@ package "Detectors" {
     Detector <|-- BinaryDetector
     Detector <|-- EmailDetector
     Detector <|-- PasswordDetector
+
+    Detector --> State : owns currentState
+    State --> StateContext : changes state through
 }
 
 package "Integer States" {

@@ -1,6 +1,6 @@
 package regexes
 
-import integer.IntegerDetector
+import detectors.IntegerDetector
 
 fun main() {
     val detector = IntegerDetector()
