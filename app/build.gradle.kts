@@ -43,4 +43,12 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+
+    testLogging {
+        events(
+            "passed",
+            "skipped",
+            "failed"
+        )
+    }
 }

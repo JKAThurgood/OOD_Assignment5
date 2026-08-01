@@ -21,6 +21,7 @@ class BinaryTests {
         // Invalid
         assertFalse(detector.test("01"))
         assertFalse(detector.test("10"))
+        assertFalse(detector.test("1050010"))
         assertFalse(detector.test("1000010"))
         assertFalse(detector.test("100a01"))
         assertFalse(detector.test(""))
