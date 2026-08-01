@@ -25,8 +25,9 @@ package "Detectors" {
     abstract class Detector {
         #currentState : State
         +test(input : String) : Boolean
-        +createInitialState() : State
+        +initialState() : State
         +changeState(state : State)
+        +accepts(state:State)
     }
 
     Detector ..|> StateContext
@@ -78,12 +79,11 @@ package "Email States" {
     class EmailPart3StartState
     class EmailPart3State
 
-    State <|-- EmailState
-
     EmailStartPartState <|-- EmailPart1StartState
     EmailStartPartState <|-- EmailPart2StartState
     EmailStartPartState <|-- EmailPart3StartState
 
+    EmailState <|-- EmailStartPartState
     EmailState <|-- EmailPart1State
     EmailState <|-- EmailPart2State
     EmailState <|-- EmailPart3State

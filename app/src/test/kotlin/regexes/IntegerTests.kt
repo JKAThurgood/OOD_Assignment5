@@ -21,6 +21,7 @@ class IntegerTests {
         assertFalse(detector.test("1asdfasdf"))
         assertFalse(detector.test("a12341234"))
         assertFalse(detector.test("012341234"))
+        assertFalse(detector.test("5+e012341234"))
         assertFalse(detector.test("0"))
     }
 }

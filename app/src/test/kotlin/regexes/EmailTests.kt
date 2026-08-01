@@ -21,6 +21,7 @@ class EmailTests {
         assertFalse(detector.test("a@b@c.com"))
         assertFalse(detector.test("a.b@b.b.c"))
         assertFalse(detector.test("joseph ditton@usu.edu"))
+        assertFalse(detector.test("joseph ditton@usu .edu"))
         assertFalse(detector.test("joseph.ditton@usu .edu"))
         assertFalse(detector.test("joseph.ditton@usu. edu"))
         assertFalse(detector.test("a@b."))
