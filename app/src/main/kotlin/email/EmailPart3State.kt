@@ -10,9 +10,7 @@ class EmailPart3State(
     override fun consume(character: String) {
 
         if (!isValidPartCharacter(character)) {
-            context.changeState(
-                Invalid(context)
-            )
+            invalid()
         }
     }
 }

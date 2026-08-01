@@ -20,9 +20,7 @@ class EmailPart2State(
             }
 
             else ->
-                context.changeState(
-                    Invalid(context)
-                )
+                invalid()
         }
     }
 }

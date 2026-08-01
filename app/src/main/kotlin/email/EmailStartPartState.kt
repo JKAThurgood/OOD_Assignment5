@@ -14,7 +14,7 @@ abstract class EmailStartPartState(
         if (isValidPartCharacter(character)) {
             context.changeState(nextFilledState())
         } else {
-            context.changeState(Invalid(context))
+            invalid()
         }
     }
 }
