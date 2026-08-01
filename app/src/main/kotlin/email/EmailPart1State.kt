@@ -15,9 +15,13 @@ class EmailPart1State(
                 context.changeState(
                     EmailPart2StartState(context)
                 )
+            character == "." -> {
+                // stay in Part1
+            }
+
 
             isValidPartCharacter(character) -> {
-                // stay in Part2
+                // stay in Part1
             }
 
             else ->
