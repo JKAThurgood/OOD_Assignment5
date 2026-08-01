@@ -6,22 +6,14 @@ import sharedStates.State
 
 class EmailPart2StartState(
     context: StateContext
-) : State(context) {
+) : EmailState(context) {
 
     override fun consume(character: String) {
 
-        when {
-            character == " " ->
-                context.changeState(Invalid(context))
-
-            character == "@" ->
-                context.changeState(Invalid(context))
-
-            character == "." ->
-                context.changeState(Invalid(context))
-
-            else ->
-                context.changeState(EmailPart2State(context))
+        if (isValidPartCharacter(character)) {
+            context.changeState(EmailPart2State(context))
+        } else {
+            context.changeState(Invalid(context))
         }
     }
 }

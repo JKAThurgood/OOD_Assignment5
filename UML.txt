@@ -67,12 +67,21 @@ package "Binary States" {
 }
 
 package "Email States" {
+
+    abstract class EmailState
+
     class EmailPart1StartState
     class EmailPart1State
     class EmailPart2StartState
     class EmailPart2State
     class EmailPart3StartState
     class EmailPart3State
+
+    State <|-- EmailState
+
+    EmailState <|-- EmailPart1StartState
+    EmailState <|-- EmailPart2StartState
+    EmailState <|-- EmailPart3StartState
 }
 
 package "Password States" {
