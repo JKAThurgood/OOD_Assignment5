@@ -6,11 +6,11 @@ import sharedStates.State
 
 class BinaryDetector : Detector() {
 
-    override fun createInitialState(): State {
+    override fun initialState(): State {
         return BinaryStartState(this)
     }
 
-    override fun isAcceptingState(state: State): Boolean {
+    override fun accepts(state: State): Boolean {
         return state is BinaryLastOneState
     }
 }

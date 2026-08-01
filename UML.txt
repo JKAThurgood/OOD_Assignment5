@@ -1,4 +1,5 @@
 @startuml
+top to bottom direction
 skinparam packageStyle rectangle
 
 package "SharedStates" {
@@ -13,8 +14,6 @@ package "SharedStates" {
     }
 
     State <|-- InvalidState
-
-    
 }
 
 package "Detectors" {
@@ -44,91 +43,57 @@ package "Detectors" {
     Detector <|-- EmailDetector
     Detector <|-- PasswordDetector
 
-    Detector --> State : owns currentState
-    State --> StateContext : changes state through
+    Detector --> State : currentState
 }
 
-package "Integer States" {
+State --> StateContext : uses
 
+package "Integer States" {
     class IntegerStartState
     class IntegerDigitState
-
-    State <|.. IntegerStartState
-    State <|.. IntegerDigitState
-
-    IntegerDetector ..> IntegerStartState : initial
-    IntegerStartState --> IntegerDigitState
 }
 
 package "Float States" {
-
     class FloatStartState
     class FloatWholeState
     class FloatDotState
     class FloatFractionState
-
-    State <|.. FloatStartState
-    State <|.. FloatWholeState
-    State <|.. FloatDotState
-    State <|.. FloatFractionState
-
-    FloatDetector ..> FloatStartState : initial
-
-    FloatStartState --> FloatWholeState
-    FloatStartState --> FloatDotState
-    FloatWholeState --> FloatDotState
-    FloatDotState --> FloatFractionState
 }
 
 package "Binary States" {
-
     class BinaryStartState
-    class LastWasOneState
-    class LastWasZeroState
-
-    State <|.. BinaryStartState
-    State <|.. LastWasOneState
-    State <|.. LastWasZeroState
-
-    BinaryDetector ..> BinaryStartState : initial
-
-    BinaryStartState --> LastWasOneState
-    LastWasOneState --> LastWasZeroState
-    LastWasZeroState --> LastWasOneState
+    class BinaryLastOneState
+    class BinaryLastZeroState
 }
 
 package "Email States" {
-
-    class EmailPart0State
+    class EmailPart1StartState
     class EmailPart1State
+    class EmailPart2StartState
     class EmailPart2State
+    class EmailPart3StartState
     class EmailPart3State
-
-    State <|.. EmailPart0State
-    State <|.. EmailPart1State
-    State <|.. EmailPart2State
-    State <|.. EmailPart3State
-
-    EmailDetector ..> EmailPart0State : initial
-
-    EmailPart0State --> EmailPart1State
-    EmailPart1State --> EmailPart2State
-    EmailPart2State --> EmailPart3State
 }
 
 package "Password States" {
-
-    class PasswordNormalState
-    class PasswordSpecialState
-
-    State <|.. PasswordNormalState
-    State <|.. PasswordSpecialState
-
-    PasswordDetector ..> PasswordNormalState : initial
-
-    PasswordNormalState --> PasswordSpecialState
-    PasswordSpecialState --> PasswordNormalState
+    class PasswordMissingBothState
+    class PasswordHasUpperState
+    class PasswordHasSpecialEndingSpecialState
+    class PasswordHasBothEndingSpecialState
+    class PasswordHasBothSafeEndingState
 }
+
+package "Integer States" ..> State : all inherit
+package "Float States" ..> State : all inherit
+package "Binary States" ..> State : all inherit
+package "Email States" ..> State : all inherit
+package "Password States" ..> State : all inherit
+
+IntegerDetector ..> IntegerStartState : initial
+FloatDetector ..> FloatStartState : initial
+BinaryDetector ..> BinaryStartState : initial
+EmailDetector ..> EmailPart1StartState : initial
+PasswordDetector ..> PasswordMissingBothState : initial
 
 @enduml
 
@@ -242,34 +207,48 @@ Invalid --> Invalid : any
 @startuml
 title Password Detector State Machine
 
-[*] --> Invalid
+[*] --> MissingBoth
 
-state Invalid
-state Valid
-state EndingSpecial
+state MissingBoth
+state HasUpper
+state HasSpecialEndingSpecial
+state HasBothEndingSpecial
+state HasBothSafeEnding
 
-Invalid --> Invalid : requirements missing
-Invalid --> Valid : length >= 8\nuppercase + special
+MissingBoth --> HasUpper : uppercase
+MissingBoth --> HasSpecialEndingSpecial : special
+MissingBoth --> MissingBoth : other
 
-Valid --> Valid : non-special
-Valid --> EndingSpecial : special
+HasUpper --> HasBothEndingSpecial : special
+HasUpper --> HasUpper : other
 
-EndingSpecial --> Valid : non-special
-EndingSpecial --> EndingSpecial : special
+HasSpecialEndingSpecial --> HasBothSafeEnding : uppercase\n(non-special)
+HasSpecialEndingSpecial --> HasSpecialEndingSpecial : other
 
-Valid --> [*]
+HasBothSafeEnding --> HasBothEndingSpecial : special
+HasBothSafeEnding --> HasBothSafeEnding : non-special
 
-note right of Invalid
-Tracks:
-- length >= 8
-- has uppercase
-- has special
+HasBothEndingSpecial --> HasBothSafeEnding : non-special
+HasBothEndingSpecial --> HasBothEndingSpecial : special
+
+HasBothSafeEnding --> [*]
+
+note right of HasBothSafeEnding
+Accepting state.
+Password has:
+- uppercase
+- special character
+- does not end with special
+
+Length >= 8 is checked
+outside the state machine.
 end note
 
-note right of EndingSpecial
-Not accepting:
-password ends
-with special char
+note left of MissingBoth
+Initial state.
+Have not yet seen:
+- uppercase
+- special
 end note
 
 @enduml

@@ -6,11 +6,11 @@ import sharedStates.State
 
 class EmailDetector : Detector() {
 
-    override fun createInitialState(): State {
+    override fun initialState(): State {
         return EmailPart1StartState(this)
     }
 
-    override fun isAcceptingState(state: State): Boolean {
+    override fun accepts(state: State): Boolean {
         return state is EmailPart3State
     }
 }

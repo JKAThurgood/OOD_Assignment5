@@ -6,21 +6,21 @@ abstract class Detector : StateContext {
 
     protected lateinit var currentState: State
 
-    abstract fun createInitialState(): State
+    abstract fun initialState(): State
 
-    abstract fun isAcceptingState(state: State): Boolean
+    abstract fun accepts(state: State): Boolean
 
     fun test(input: String): Boolean {
 
-        currentState = createInitialState()
+        currentState = initialState()
 
         input.forEach { character ->
             currentState.consume(character.toString())
         }
 
-        val result = isAcceptingState(currentState)
+        val result = accepts(currentState)
 
-        currentState = createInitialState()
+        currentState = initialState()
 
         return result
     }

@@ -6,11 +6,11 @@ import sharedStates.State
 
 class FloatDetector : Detector() {
 
-    override fun createInitialState(): State {
+    override fun initialState(): State {
         return FloatStartState(this)
     }
 
-    override fun isAcceptingState(state: State): Boolean {
+    override fun accepts(state: State): Boolean {
         return state is FloatFractionState
     }
 }
